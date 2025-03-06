@@ -7,9 +7,9 @@ class QueriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Example student queries (Replace with actual data fetching from Firestore or DB)
     List<Map<String, String>> queries = [
-      {"student": "John Doe", "query": "My attendance for 10th Feb is not marked."},
-      {"student": "Jane Smith", "query": "I attended the class but my name is absent."},
-      {"student": "Alex Brown", "query": "Is there a way to check past attendance records?"},
+      {"student": "Dharmendra", "query": "My attendance for 10th Feb is not marked."},
+      {"student": "Aadhya", "query": "I attended the class but my name is absent."},
+      {"student": "Bhumica", "query": "Is there a way to check past attendance records?"},
     ];
 
     return Scaffold(

@@ -37,10 +37,14 @@ dependencies:
   syncfusion_flutter_xlsio: ^28.2.9
   fl_chart: ^0.70.2
 
+#  image_picker: ^1.0.7  # Use the latest stable version
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  #image_picker: ^1.0.7  # Ensure this is present
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
