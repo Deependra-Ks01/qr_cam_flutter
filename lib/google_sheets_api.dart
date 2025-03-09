@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class GoogleSheetsApi {
   static const String _spreadsheetId = "1w0Pk9HTR71sdwP-DpGwU6z5DPCN4XEE5C80axwI0aCM"; // Your Google Sheet ID
   static const String _userSheet = "Sheet2"; // Sign-up details & login verification
+  static const String _userSheetS = "Sheet3";
   static const String _qrSheet = "Sheet1"; // QR code storage
 
   /// **Authenticate with Google Sheets API**
@@ -43,6 +44,30 @@ class GoogleSheetsApi {
     }
   }
 
+  static Future<void> addUserDataS(String name, String email, String password) async {
+    try {
+      final client = await _getAuthClient();
+      final sheetsApi = sheets.SheetsApi(client);
+
+      final valueRange = sheets.ValueRange(
+        values: [
+          [name, email, password], // Store name, email, and password
+        ],
+      );
+
+      await sheetsApi.spreadsheets.values.append(
+        valueRange,
+        _spreadsheetId,
+        '$_userSheetS!A:C', // Store in columns A, B, C
+        valueInputOption: 'RAW',
+      );
+
+      client.close();
+    } catch (e) {
+      print('Error storing user data in Google Sheets: $e');
+    }
+  }
+
   /// **Fetch Users for Login Verification from Sheet2**
   static Future<List<Map<String, String>>> fetchUsers() async {
     try {
@@ -52,6 +77,36 @@ class GoogleSheetsApi {
       final response = await sheetsApi.spreadsheets.values.get(
         _spreadsheetId,
         '$_userSheet!A:C', // Fetch Name, Email, Password
+      );
+
+      client.close();
+
+      if (response.values == null || response.values!.isEmpty) {
+        return [];
+      }
+
+      // Convert response to a list of maps with proper typing
+      return response.values!.map((row) {
+        return {
+          'name': row.length > 0 ? row[0].toString() : "",
+          'email': row.length > 1 ? row[1].toString() : "",
+          'password': row.length > 2 ? row[2].toString() : "",
+        };
+      }).toList();
+    } catch (e) {
+      print('Error fetching user data from Google Sheets: $e');
+      return [];
+    }
+  }
+
+  static Future<List<Map<String, String>>> fetchUsersS() async {
+    try {
+      final client = await _getAuthClient();
+      final sheetsApi = sheets.SheetsApi(client);
+
+      final response = await sheetsApi.spreadsheets.values.get(
+        _spreadsheetId,
+        '$_userSheetS!A:C', // Fetch Name, Email, Password
       );
 
       client.close();
