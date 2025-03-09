@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'user_database.dart';
+import 'google_sheets_api.dart'; // Import the Google Sheets API file
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -12,20 +12,38 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _email = '';
-  String _mobile = '';
   String _password = '';
   bool _rememberMe = false;
 
-  void _signUp() {
+  void _signUp() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      UserDatabase.addUser(_name, _email, _password);
+
+      // Store user data in Google Sheets
+      // await GoogleSheetsAPI.appendUserData(_name, _email, _password);
+      await GoogleSheetsApi.addUserData(_name, _email, _password);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('User registered successfully!')),
       );
       Navigator.pop(context); // Return to login page
     }
   }
+  /// Function to store user data in Google Sheets
+  // Future<void> _signUp() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     _formKey.currentState!.save();
+  //
+  //     // Store user details in Google Sheets
+  //     await GoogleSheetsApi.appendUserData(_name, _email, _password);
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('User registered successfully!')),
+  //     );
+  //
+  //     Navigator.pop(context); // Return to login page
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +54,16 @@ class _SignUpPageState extends State<SignUpPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/Cuboid.jpeg', height: 200), // Replace with your image
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Register',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Please register to login.',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Form(
               key: _formKey,
               child: Column(
@@ -53,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Username',
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: const Icon(Icons.person),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     validator: (value) {
@@ -64,27 +82,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     onSaved: (value) => _name = value!,
                   ),
-                  SizedBox(height: 10),
-                  // TextFormField(
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Mobile Number',
-                  //     prefixIcon: Icon(Icons.phone),
-                  //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  //   ),
-                  //   keyboardType: TextInputType.phone,
-                  //   validator: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Please enter your mobile number';
-                  //     }
-                  //     return null;
-                  //   },
-                  //   onSaved: (value) => _mobile = value!,
-                  // ),
-                  // SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -96,11 +98,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     onSaved: (value) => _email = value!,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: const Icon(Icons.lock),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     obscureText: true,
@@ -112,40 +114,35 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     onSaved: (value) => _password = value!,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: _rememberMe,
-                            onChanged: (value) {
-                              setState(() {
-                                _rememberMe = value!;
-                              });
-                            },
-                          ),
-                          Text('Remember me'),
-                        ],
+                      Checkbox(
+                        value: _rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            _rememberMe = value!;
+                          });
+                        },
                       ),
+                      const Text('Remember me'),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _signUp,
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: Text('Sign Up'),
+                    child: const Text('Sign Up'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context); // Back to login page
                     },
-                    child: Text("Already have an account? Sign In"),
+                    child: const Text("Already have an account? Sign In"),
                   ),
                 ],
               ),
@@ -156,6 +153,166 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
+
+
+// import 'package:flutter/material.dart';
+// import 'user_database.dart';
+//
+// class SignUpPage extends StatefulWidget {
+//   const SignUpPage({super.key});
+//
+//   @override
+//   State<SignUpPage> createState() => _SignUpPageState();
+// }
+//
+// class _SignUpPageState extends State<SignUpPage> {
+//   final _formKey = GlobalKey<FormState>();
+//   String _name = '';
+//   String _email = '';
+//   String _mobile = '';
+//   String _password = '';
+//   bool _rememberMe = false;
+//
+//   void _signUp() {
+//     if (_formKey.currentState!.validate()) {
+//       _formKey.currentState!.save();
+//       UserDatabase.addUser(_name, _email, _password);
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('User registered successfully!')),
+//       );
+//       Navigator.pop(context); // Return to login page
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Image.asset('assets/Cuboid.jpeg', height: 200), // Replace with your image
+//             SizedBox(height: 20),
+//             Text(
+//               'Register',
+//               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+//             ),
+//             Text(
+//               'Please register to login.',
+//               style: TextStyle(fontSize: 16, color: Colors.grey),
+//             ),
+//             SizedBox(height: 20),
+//             Form(
+//               key: _formKey,
+//               child: Column(
+//                 children: [
+//                   TextFormField(
+//                     decoration: InputDecoration(
+//                       labelText: 'Username',
+//                       prefixIcon: Icon(Icons.person),
+//                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+//                     ),
+//                     validator: (value) {
+//                       if (value == null || value.isEmpty) {
+//                         return 'Please enter your name';
+//                       }
+//                       return null;
+//                     },
+//                     onSaved: (value) => _name = value!,
+//                   ),
+//                   SizedBox(height: 10),
+//                   // TextFormField(
+//                   //   decoration: InputDecoration(
+//                   //     labelText: 'Mobile Number',
+//                   //     prefixIcon: Icon(Icons.phone),
+//                   //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+//                   //   ),
+//                   //   keyboardType: TextInputType.phone,
+//                   //   validator: (value) {
+//                   //     if (value == null || value.isEmpty) {
+//                   //       return 'Please enter your mobile number';
+//                   //     }
+//                   //     return null;
+//                   //   },
+//                   //   onSaved: (value) => _mobile = value!,
+//                   // ),
+//                   // SizedBox(height: 10),
+//                   TextFormField(
+//                     decoration: InputDecoration(
+//                       labelText: 'Email',
+//                       prefixIcon: Icon(Icons.email),
+//                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+//                     ),
+//                     keyboardType: TextInputType.emailAddress,
+//                     validator: (value) {
+//                       if (value == null || value.isEmpty) {
+//                         return 'Please enter your email';
+//                       }
+//                       return null;
+//                     },
+//                     onSaved: (value) => _email = value!,
+//                   ),
+//                   SizedBox(height: 10),
+//                   TextFormField(
+//                     decoration: InputDecoration(
+//                       labelText: 'Password',
+//                       prefixIcon: Icon(Icons.lock),
+//                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+//                     ),
+//                     obscureText: true,
+//                     validator: (value) {
+//                       if (value == null || value.isEmpty) {
+//                         return 'Please enter your password';
+//                       }
+//                       return null;
+//                     },
+//                     onSaved: (value) => _password = value!,
+//                   ),
+//                   SizedBox(height: 10),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Checkbox(
+//                             value: _rememberMe,
+//                             onChanged: (value) {
+//                               setState(() {
+//                                 _rememberMe = value!;
+//                               });
+//                             },
+//                           ),
+//                           Text('Remember me'),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(height: 20),
+//                   ElevatedButton(
+//                     onPressed: _signUp,
+//                     style: ElevatedButton.styleFrom(
+//                       minimumSize: Size(double.infinity, 50),
+//                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+//                     ),
+//                     child: Text('Sign Up'),
+//                   ),
+//                   SizedBox(height: 20),
+//                   TextButton(
+//                     onPressed: () {
+//                       Navigator.pop(context); // Back to login page
+//                     },
+//                     child: Text("Already have an account? Sign In"),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
 
